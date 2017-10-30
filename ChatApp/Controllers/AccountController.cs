@@ -24,6 +24,7 @@ namespace ChatApp.Controllers
         public IActionResult SignIn()
         {
             var redirectUrl = Url.Page("/Index", pageHandler: null, values: null, protocol: "https");
+            Console.WriteLine("Scheme: " + Request.Scheme);
             Console.WriteLine("redirectUrl: " + redirectUrl);
             return Challenge(
                 new AuthenticationProperties { RedirectUri = redirectUrl },

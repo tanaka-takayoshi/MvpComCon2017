@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using Microsoft.AspNetCore.DataProtection;
 using ChatApp.Hubs;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace ChatApp
 {
@@ -28,6 +29,11 @@ namespace ChatApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.All;
+            });
+
             var conn = Configuration["REDIS_CONNECTION_STRING"];
 
             var redis = ConnectionMultiplexer.Connect(conn);
