@@ -14,6 +14,7 @@ using StackExchange.Redis;
 using Microsoft.AspNetCore.DataProtection;
 using ChatApp.Hubs;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Primitives;
 
 namespace ChatApp
 {
@@ -60,12 +61,15 @@ namespace ChatApp
             services.AddMvc();
         }
 
+        private const string XForwardedPathBase = "X-Forwarded-PathBase";
+        private const string XForwardedProto = "X-Forwarded-Proto";
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto
             });
 
             if (env.IsDevelopment())
@@ -77,7 +81,22 @@ namespace ChatApp
             {
                 app.UseExceptionHandler("/Error");
             }
-            
+
+            app.Use((context, next) =>
+            {
+                if (context.Request.Headers.TryGetValue(XForwardedPathBase, out StringValues pathBase))
+                {
+                    context.Request.PathBase = new PathString(pathBase);
+
+                }
+
+                if (context.Request.Headers.TryGetValue(XForwardedProto, out StringValues proto))
+                {
+                    context.Request.Protocol = proto;
+                }
+
+                return next();
+            });
 
             app.UseStaticFiles();
 
