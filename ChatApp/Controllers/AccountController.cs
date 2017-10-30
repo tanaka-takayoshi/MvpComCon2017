@@ -23,13 +23,14 @@ namespace ChatApp.Controllers
         [HttpGet]
         public IActionResult SignIn()
         {
-            var redirectUrl = Url.Page("/Index", pageHandler: null, values: null, protocol: "https");
-            Console.WriteLine("header: ");
-            foreach (var item in Request.Headers)
-            {
-                Console.WriteLine(item.Key + "=" + item.Value);
-            }
-            Console.WriteLine("Scheme: " + Request.Scheme);
+            var redirectUrl = Url.Page("/Index");
+            
+            //Console.WriteLine("header: ");
+            //foreach (var item in Request.Headers)
+            //{
+            //    Console.WriteLine(item.Key + "=" + item.Value);
+            //}
+            //Console.WriteLine("Scheme: " + Request.Scheme);
             Console.WriteLine("redirectUrl: " + redirectUrl);
             return Challenge(
                 new AuthenticationProperties { RedirectUri = redirectUrl },
@@ -40,8 +41,7 @@ namespace ChatApp.Controllers
         [HttpGet]
         public IActionResult ResetPassword()
         {
-            //Frontend LoadbalancerÇ≈SSL terminateÇ≥ÇπÇƒÇ¢ÇÈÇ∆Ç´ÇÕÅAã≠êßìIÇ…httpsÇéwíËÇµÇ»Ç¢Ç∆Ç¢ÇØÇ»Ç¢
-            var redirectUrl = Url.Page("/Index", pageHandler: null, values: null, protocol: "https");
+            var redirectUrl = Url.Page("/Index");
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             properties.Items[AzureAdB2COptions.PolicyAuthenticationProperty] = _options.ResetPasswordPolicyId;
             return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
@@ -50,7 +50,7 @@ namespace ChatApp.Controllers
         [HttpGet]
         public IActionResult EditProfile()
         {
-            var redirectUrl = Url.Page("/Index", pageHandler: null, values: null, protocol: "https");
+            var redirectUrl = Url.Page("/Index");
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             properties.Items[AzureAdB2COptions.PolicyAuthenticationProperty] = _options.EditProfilePolicyId;
             return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
@@ -59,7 +59,7 @@ namespace ChatApp.Controllers
         [HttpGet]
         public IActionResult SignOut()
         {
-            var callbackUrl = Url.Page("/Account/SignedOut", pageHandler: null, values: null, protocol: "https");
+            var callbackUrl = Url.Page("/Account/SignedOut");
             return SignOut(
                 new AuthenticationProperties { RedirectUri = callbackUrl },
                 CookieAuthenticationDefaults.AuthenticationScheme,

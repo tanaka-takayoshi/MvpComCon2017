@@ -30,11 +30,6 @@ namespace ChatApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.Configure<ForwardedHeadersOptions>(options =>
-            //{
-            //    options.ForwardedHeaders = ForwardedHeaders.All;
-            //});
-
             var conn = Configuration["REDIS_CONNECTION_STRING"];
 
             var redis = ConnectionMultiplexer.Connect(conn);
@@ -67,6 +62,7 @@ namespace ChatApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            //not enough
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedProto
@@ -82,6 +78,7 @@ namespace ChatApp
                 app.UseExceptionHandler("/Error");
             }
 
+            //workaround https://github.com/aspnet/Docs/issues/2384#issuecomment-286146843
             app.Use((context, next) =>
             {
                 if (context.Request.Headers.TryGetValue(XForwardedPathBase, out StringValues pathBase))
