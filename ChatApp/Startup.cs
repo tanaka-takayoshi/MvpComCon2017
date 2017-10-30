@@ -72,6 +72,10 @@ namespace ChatApp
             {
                 app.UseExceptionHandler("/Error");
             }
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
             app.UseStaticFiles();
 
