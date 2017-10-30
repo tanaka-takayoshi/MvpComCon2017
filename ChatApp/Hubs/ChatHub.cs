@@ -10,7 +10,7 @@ namespace ChatApp.Hubs
     {
         public void Send(string message)
         {
-            var name2 = Context.User.FindAll("email").FirstOrDefault()?.Value;
+            var name2 = Context.User.FindAll("email").FirstOrDefault()?.Value ?? "anonymous@example.net";
             // Call the broadcastMessage method to update clients.
             Clients.All.InvokeAsync("broadcastMessage", name2, message);
         }
