@@ -23,7 +23,7 @@ namespace ChatApp.Controllers
         [HttpGet]
         public IActionResult SignIn()
         {
-            var redirectUrl = Url.Page("/Index");
+            var redirectUrl = Url.Page("/Index", pageHandler: null, values: null, protocol: "https");
             return Challenge(
                 new AuthenticationProperties { RedirectUri = redirectUrl },
                 OpenIdConnectDefaults.AuthenticationScheme
@@ -33,7 +33,8 @@ namespace ChatApp.Controllers
         [HttpGet]
         public IActionResult ResetPassword()
         {
-            var redirectUrl = Url.Page("/Index");
+            //Frontend LoadbalancerÇ≈SSL terminateÇ≥ÇπÇƒÇ¢ÇÈÇ∆Ç´ÇÕÅAã≠êßìIÇ…httpsÇéwíËÇµÇ»Ç¢Ç∆Ç¢ÇØÇ»Ç¢
+            var redirectUrl = Url.Page("/Index", pageHandler: null, values: null, protocol: "https");
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             properties.Items[AzureAdB2COptions.PolicyAuthenticationProperty] = _options.ResetPasswordPolicyId;
             return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
@@ -42,7 +43,7 @@ namespace ChatApp.Controllers
         [HttpGet]
         public IActionResult EditProfile()
         {
-            var redirectUrl = Url.Page("/Index");
+            var redirectUrl = Url.Page("/Index", pageHandler: null, values: null, protocol: "https");
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             properties.Items[AzureAdB2COptions.PolicyAuthenticationProperty] = _options.EditProfilePolicyId;
             return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
@@ -51,7 +52,7 @@ namespace ChatApp.Controllers
         [HttpGet]
         public IActionResult SignOut()
         {
-            var callbackUrl = Url.Page("/Account/SignedOut", pageHandler: null, values: null, protocol: Request.Scheme);
+            var callbackUrl = Url.Page("/Account/SignedOut", pageHandler: null, values: null, protocol: "https");
             return SignOut(
                 new AuthenticationProperties { RedirectUri = callbackUrl },
                 CookieAuthenticationDefaults.AuthenticationScheme,
