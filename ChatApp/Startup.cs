@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.DataProtection;
 using ChatApp.Hubs;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Primitives;
+using Microsoft.AspNetCore.SignalR.Redis;
 
 namespace ChatApp
 {
@@ -43,7 +44,17 @@ namespace ChatApp
                 option.InstanceName = "master";
             });
 
-            services.AddSignalR();
+            services.AddSignalR().AddRedis(option =>
+            {
+                option.Options.AbortOnConnectFail = false;
+                option.Options.Ssl = true;
+                option.Options.EndPoints.Add("mvpcomcon2017.redis.cache.windows.net", 6380);
+                option.Options.Password = "p9NLOpjI2bzGRSvXUQlogYTgwHpAksqG55OVvqkxklA=";
+            });
+
+            services.AddSingleton(typeof(RedisHubLifetimeManager<>), typeof(RedisHubLifetimeManager<>));
+            //services.AddSingleton(typeof(HubLifetimeManager<>), typeof(RedisPresenceHublifetimeManager<>));
+            //services.AddSingleton(typeof(IUserTracker<>), typeof(RedisUserTracker<>));
 
             services.AddAuthentication(sharedOptions =>
             {
