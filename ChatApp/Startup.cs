@@ -44,12 +44,24 @@ namespace ChatApp
                 option.InstanceName = "master";
             });
 
+            //mvpcomcon2017.redis.cache.windows.net:6380,password=p9NLOpjI2bzGRSvXUQlogYTgwHpAksqG55OVvqkxklA=,ssl=True,abortConnect=False
+            (string host, int port, string password) ParseRedisConnectionString(string connectionString)
+            {
+                const string header = "password=";
+                var array = connectionString.Split(',');
+                var hostPort = array.FirstOrDefault()?.Split(':');
+                var host = hostPort?[0];
+                int.TryParse(hostPort?[1], out int port);
+                var password = array.FirstOrDefault(s => s.StartsWith(header)).Substring(header.Length);
+                return (host, port, password);
+            }
+            var redisPrarams = ParseRedisConnectionString(conn);
             services.AddSignalR().AddRedis(option =>
             {
                 option.Options.AbortOnConnectFail = false;
                 option.Options.Ssl = true;
-                option.Options.EndPoints.Add("mvpcomcon2017.redis.cache.windows.net", 6380);
-                option.Options.Password = "p9NLOpjI2bzGRSvXUQlogYTgwHpAksqG55OVvqkxklA=";
+                option.Options.EndPoints.Add(redisPrarams.host, redisPrarams.port);
+                option.Options.Password = redisPrarams.password;
             });
 
             services.AddSingleton(typeof(RedisHubLifetimeManager<>), typeof(RedisHubLifetimeManager<>));
