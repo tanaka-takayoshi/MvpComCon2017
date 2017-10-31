@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using ChatApp.AvaloniaCore.ViewModels;
 
 namespace ChatApp.AvaloniaCore
 {
@@ -9,6 +10,7 @@ namespace ChatApp.AvaloniaCore
         public MainWindow()
         {
             this.InitializeComponent();
+            this.DataContext = new MainViewModel();
             this.AttachDevTools();
         }
 

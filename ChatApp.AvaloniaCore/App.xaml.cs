@@ -23,6 +23,7 @@ namespace ChatApp.AvaloniaCore
             InitializeLogging();
             AppBuilder.Configure<App>()
                 .UsePlatformDetect()
+                .UseReactiveUI()
                 .Start<MainWindow>();
         }
 
@@ -36,10 +37,10 @@ namespace ChatApp.AvaloniaCore
         private static void InitializeLogging()
         {
 #if DEBUG
-            SerilogLogger.Initialize(new LoggerConfiguration()
-                .MinimumLevel.Warning()
-                .WriteTo.Trace(outputTemplate: "{Area}: {Message}")
-                .CreateLogger());
+            // SerilogLogger.Initialize(new LoggerConfiguration()
+            //     .MinimumLevel.Warning()
+            //     .WriteTo.Trace(outputTemplate: "{Area}: {Message}")
+            //     .CreateLogger());
 #endif
         }
     }
