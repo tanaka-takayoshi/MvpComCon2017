@@ -19,5 +19,11 @@ namespace ChatApp.Hubs
             // Call the broadcastMessage method to update clients.
             Clients.All.InvokeAsync("broadcastMessage", name2, message);
         }
+
+        public void SendFromConsole(string name, string message)
+        {
+            // Call the broadcastMessage method to update clients.
+            Clients.All.InvokeAsync("broadcastMessage", name, message);
+        }
     }
 }
