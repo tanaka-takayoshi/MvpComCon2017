@@ -102,21 +102,21 @@ namespace ChatApp
             }
 
             //workaround https://github.com/aspnet/Docs/issues/2384#issuecomment-286146843
-            app.Use((context, next) =>
-            {
-                if (context.Request.Headers.TryGetValue(XForwardedPathBase, out StringValues pathBase))
-                {
-                    context.Request.PathBase = new PathString(pathBase);
-
-                }
-
-                if (context.Request.Headers.TryGetValue(XForwardedProto, out StringValues proto))
-                {
-                    context.Request.Protocol = proto;
-                }
-
-                return next();
-            });
+            //app.Use((context, next) =>
+            //{
+            //   if (context.Request.Headers.TryGetValue(XForwardedPathBase, out StringValues pathBase))
+            //    {
+            //        context.Request.PathBase = new PathString(pathBase);
+            //
+            //    }
+            //
+            //    if (context.Request.Headers.TryGetValue(XForwardedProto, out StringValues proto))
+            //    {
+            //        context.Request.Protocol = proto;
+            //    }
+            //
+            //    return next();
+            //});
 
             app.UseStaticFiles();
 
