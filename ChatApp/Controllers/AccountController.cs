@@ -25,12 +25,12 @@ namespace ChatApp.Controllers
         {
             var redirectUrl = Url.Page("/Index");
             
-            //Console.WriteLine("header: ");
-            //foreach (var item in Request.Headers)
-            //{
-            //    Console.WriteLine(item.Key + "=" + item.Value);
-            //}
-            //Console.WriteLine("Scheme: " + Request.Scheme);
+            Console.WriteLine("header: ");
+            foreach (var item in Request.Headers)
+            {
+                Console.WriteLine(item.Key + "=" + item.Value);
+            }
+            Console.WriteLine("Scheme: " + Request.Scheme);
             Console.WriteLine("redirectUrl: " + redirectUrl);
             return Challenge(
                 new AuthenticationProperties { RedirectUri = redirectUrl },
