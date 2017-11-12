@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.AspNetCore.Sockets;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace ChatApp.ConsoleApp
 {
@@ -10,7 +12,7 @@ namespace ChatApp.ConsoleApp
     {
         static void Main(string[] args)
         {
-            var baseUrl = "http://chat.52.175.232.56.nip.io/chat";
+            var baseUrl = "http://mvpcc-chat.tanaka733.net/chat";
 
             Console.WriteLine("Connecting to {0}", baseUrl);
             HubConnection connection =  ConnectAsync(baseUrl).Result;
@@ -40,10 +42,11 @@ namespace ChatApp.ConsoleApp
                 //    return true;
                 //};
                 var connection = new HubConnectionBuilder()
-                                .WithMessageHandler(handler)
-                                .WithUrl(baseUrl)
-                                .WithConsoleLogger(LogLevel.Trace)
-                                .Build();
+                        .WithMessageHandler(handler)
+                        .WithTransport(TransportType.ServerSentEvents)
+                        .WithUrl(baseUrl)
+                        .WithConsoleLogger(LogLevel.Trace)
+                        .Build();
                 try
                 {
                     await connection.StartAsync();

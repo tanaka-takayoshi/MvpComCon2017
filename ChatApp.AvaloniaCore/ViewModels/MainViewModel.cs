@@ -8,6 +8,11 @@ using System.Threading;
 
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.AspNetCore.Sockets.Client;
+using Microsoft.AspNetCore.Sockets;
+using Microsoft.Extensions.Logging;
+using System.Net.Http;
+using Avalonia.Threading;
+
 
 namespace ChatApp.AvaloniaCore.ViewModels
 {
@@ -30,71 +35,93 @@ namespace ChatApp.AvaloniaCore.ViewModels
 
             Items = new ObservableCollection<MessageItem>();
             
-            //var t = StartAsync().Result;
             
             SendCommand =   ReactiveCommand.Create<object>(param =>
             {
                 var msg = SendMessage;
-                // Items.Add(new MessageItem
-                // {
-                //     Message = msg,
-                //     Email = "test"
-                // });
-                //connection.InvokeAsync<object>("boradcastMessage", "client@example.com", msg);
-                SendMessage = "";
+                Dispatcher.UIThread.InvokeAsync(async () =>
+                    {
+                        await Executor.Connection.SendAsync("SendFromConsole", "fedora@example.net", msg);
+            
+                        SendMessage = "";
+                    });
             });
 
+            Executor.Connection.On<string, string>("broadcastMessage", (name, msg) =>
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        Items.Add(new MessageItem
+                        {
+                            Message = msg,
+                            Email = name
+                        });
+                    });
+                // Observable.Start(() =>
+                // {
+                //     Console.WriteLine("Received");
+                // }).ObserveOn(AvaloniaScheduler.Instance)
+                // .Subscribe(_ => 
+                // {
+                //     Console.WriteLine("UI Updating");
+                //     Items.Add(new MessageItem
+                //     {
+                //         Message = msg,
+                //         Email = name
+                //     });
+                // });
+            });
         }
 
         private async Task<int> StartAsync()
         {
-            var baseUrl = "https://chat.52.175.232.56.nip.io/";
+            var baseUrl = "http://chat.52.175.232.56.nip.io/chat";
 
             Console.WriteLine("Connecting to {0}", baseUrl);
             connection = await ConnectAsync(baseUrl);
             Console.WriteLine("Connected to {0}", baseUrl);
 
-            // try
-            // {
-
-            //     var cts = new CancellationTokenSource();
-                
-            //     //cts.Cancel();
-
-            //     // Set up handler
-            //     //connection.On<string>("Send", Console.WriteLine);
-
-            //     connection.Closed += e =>
-            //     {
-            //         Console.WriteLine("Connection closed.");
-            //         cts.Cancel();
-            //         return Task.CompletedTask;
-            //     };
-
-            //     var ctsTask = Task.Delay(-1, cts.Token);
-            //     // await connection.InvokeAsync<object>("Send", line, cts.Token);
-            // }
-            // catch (AggregateException aex) when (aex.InnerExceptions.All(e => e is OperationCanceledException))
-            // {
-            // }
-            // catch (OperationCanceledException)
-            // {
-            // }
-            // finally
-            // {
-            //     //await connection.DisposeAsync();
-            // }
+            connection.On<string, string>("broadcastMessage", (name, msg) =>
+            {
+                Items.Add(new MessageItem
+                {
+                    Message = msg,
+                    Email = name
+                });
+            });
             return 0;
         }
 
-        private async Task<HubConnection> ConnectAsync(string baseUrl)
+        private static async Task<HubConnection> ConnectAsync(string baseUrl)
         {
-            var connection = new HubConnectionBuilder()
+            // Keep trying to until we can start
+            while (true)
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
+
+                var connection = new HubConnectionBuilder()
+                                .WithMessageHandler(handler)
+                                .WithTransport(TransportType.WebSockets)
                                 .WithUrl(baseUrl)
-                                //.WithConsoleLogger(LogLevel.Trace)
+                                .WithConsoleLogger(LogLevel.Trace)
                                 .Build();
-            await connection.StartAsync();
-            return connection;
+
+                try
+                {
+                    Console.WriteLine("Staring");
+                    await connection.StartAsync();
+                    Console.WriteLine("Stared");
+                    return connection;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    await Task.Delay(1000);
+                }
+            }
         }
     }
 

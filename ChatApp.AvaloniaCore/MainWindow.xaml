@@ -6,24 +6,27 @@
             <Setter Property="FontSize" Value="18"/>
         </Style>
     </Window.Styles>
-
-    <StackPanel Orientation="Vertical" Gap="4">
-        <StackPanel Orientation="Horizontal" Gap="8">
-            <TextBox AcceptsReturn="True" TextWrapping="Wrap" Width="200" Height="125"
+    <DockPanel LastChildFill="True">
+        <Grid DockPanel.Dock="Top" Height="50">
+            <Grid.ColumnDefinitions>  
+                <ColumnDefinition Width="*" />  
+                <ColumnDefinition Width="100" /> 
+            </Grid.ColumnDefinitions>                 
+            <TextBox AcceptsReturn="True" TextWrapping="Wrap"
                     Text="{Binding SendMessage}"/>
-            <Button Command="{Binding SendCommand}">
-                Send
+            <Button Command="{Binding SendCommand}" Grid.Column="1" Width="100" Content="Send">
             </Button>
-    </StackPanel>
-    <ListBox Items="{Binding Items}">
-        <ListBox.ItemTemplate>
-            <DataTemplate DataType="vm:MessageItem">
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="{Binding Email}"/>
-                    <TextBlock Text="{Binding Message}"/>
-                </StackPanel>
-            </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
-    </StackPanel>
+        </Grid>  
+
+        <ListBox Items="{Binding Items}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="vm:MessageItem">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Email}"/>
+                        <TextBlock Text="{Binding Message}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
 </Window>
